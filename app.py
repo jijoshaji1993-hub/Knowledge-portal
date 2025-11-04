@@ -1,4 +1,3 @@
-
 # app.py - BSNL KNOWLEDGE PORTAL MRM (Final — dynamic Settings + drag-and-drop ordering + styled accordions + header control)
 import streamlit as st
 import json
@@ -216,6 +215,13 @@ def apply_global_styles(st_settings):
         margin-bottom: 14px;
         background: rgba(255,255,255,0.01);
     }}
+    .user-priv-box {{
+        border:1px solid rgba(255,255,255,0.04);
+        padding:8px;
+        border-radius:8px;
+        margin-bottom:8px;
+        background: rgba(0,0,0,0.02);
+    }}
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)
@@ -413,8 +419,9 @@ def settings_page():
                 st.success("Header logo uploaded and saved.")
                 # update live and persistent settings immediately
                 live["header_logo"] = logo_path
-                # do not preview the image here (admin preference)
                 save_settings(live)
+                # re-run so header reflects new logo immediately
+                st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
     # Feature Toggles Section
@@ -480,38 +487,40 @@ def settings_page():
                 new_subtopic_order[t] = [s for s, n in sorted(arr, key=lambda x: x[1])]
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # User Privileges Section - show accordions per user
+    # User Privileges Section - show a top-level expander, but DO NOT nest expanders inside it.
     with st.expander("👥 User Privileges", expanded=False):
         st.markdown("<div class='settings-section'>", unsafe_allow_html=True)
-        st.caption("Select a user from the list below to open their privileges accordion (per user). Admins always have full privileges.")
+        st.caption("Select a user from the list below and edit their privileges. Admins always have full privileges.")
         all_users = list(users.keys())
-        # For each user, create an expander (accordion). Admin excluded from edits but shown.
+        # For each user, open a container (NOT an inner expander) to avoid nesting expanders.
         for u in all_users:
-            with st.expander(f"User: {u}", expanded=False):
-                user_privs = settings.get("user_privileges", {}).get(u, {})
-                all_topic_paths = get_all_topic_paths(sections)
-                cur_view = [p for p, perms in user_privs.items() if "view" in perms]
-                cur_edit = [p for p, perms in user_privs.items() if "edit" in perms]
-                colv, cole = st.columns([1,1])
-                with colv:
-                    view_sel = st.multiselect(f"Grant VIEW access for {u}:", options=all_topic_paths, default=cur_view, key=f"view_{u}")
-                with cole:
-                    edit_sel = st.multiselect(f"Grant EDIT access for {u}:", options=all_topic_paths, default=cur_edit, key=f"edit_{u}")
-                if st.button(f"Save privileges for {u}", key=f"save_priv_{u}"):
-                    up = settings.get("user_privileges", {})
-                    mapping = {}
-                    for p in view_sel:
-                        mapping.setdefault(p, [])
-                        if "view" not in mapping[p]:
-                            mapping[p].append("view")
-                    for p in edit_sel:
-                        mapping.setdefault(p, [])
-                        if "edit" not in mapping[p]:
-                            mapping[p].append("edit")
-                    up[u] = mapping
-                    settings["user_privileges"] = up
-                    save_settings(settings)
-                    st.success(f"Privileges saved for {u}")
+            # container looks like a card/mini-accordion entry
+            st.markdown(f"<div class='user-priv-box'><strong>User: {u}</strong> &nbsp; <span style='opacity:0.7'>({users[u]['role']})</span></div>", unsafe_allow_html=True)
+            # Now show multi-selects for view/edit across all topic+subtopic paths
+            user_privs = settings.get("user_privileges", {}).get(u, {})
+            all_topic_paths = get_all_topic_paths(sections)
+            cur_view = [p for p, perms in user_privs.items() if "view" in perms]
+            cur_edit = [p for p, perms in user_privs.items() if "edit" in perms]
+            colv, cole = st.columns([1,1])
+            with colv:
+                view_sel = st.multiselect(f"Grant VIEW access for {u}:", options=all_topic_paths, default=cur_view, key=f"view_{u}")
+            with cole:
+                edit_sel = st.multiselect(f"Grant EDIT access for {u}:", options=all_topic_paths, default=cur_edit, key=f"edit_{u}")
+            if st.button(f"Save privileges for {u}", key=f"save_priv_{u}"):
+                up = settings.get("user_privileges", {})
+                mapping = {}
+                for p in view_sel:
+                    mapping.setdefault(p, [])
+                    if "view" not in mapping[p]:
+                        mapping[p].append("view")
+                for p in edit_sel:
+                    mapping.setdefault(p, [])
+                    if "edit" not in mapping[p]:
+                        mapping[p].append("edit")
+                up[u] = mapping
+                settings["user_privileges"] = up
+                save_settings(settings)
+                st.success(f"Privileges saved for {u}")
         st.markdown("</div>", unsafe_allow_html=True)
 
     # Save / Reset Buttons as a final collapsible control
@@ -639,23 +648,25 @@ def render_section(level, node):
                 st.markdown(content, unsafe_allow_html=True)
 
         # Show uploaded files for everyone (only where uploaded)
-        path_id = "_".join(level) if level else "home"
-        page_dir = os.path.join(UPLOAD_DIR, path_id)
-        if os.path.exists(page_dir):
-            files = sorted(os.listdir(page_dir))
-            if files:
-                st.markdown("---")
-                c = st.columns(5)
-                for i, f in enumerate(files):
-                    fp = os.path.join(page_dir, f)
-                    ext = f.split(".")[-1].lower()
-                    if ext in ["png", "jpg", "jpeg"]:
-                        try:
-                            c[i%5].image(fp, caption=f, width=120)
-                        except Exception:
-                            c[i%5].markdown(f"🖼️ [{f}]({fp})")
-                    else:
-                        c[i%5].markdown(f"📄 [{f}]({fp})")
+        # ====== IMPORTANT CHANGE: show files ONLY when `level` is truthy (i.e. not home)
+        if level:
+            path_id = "_".join(level)
+            page_dir = os.path.join(UPLOAD_DIR, path_id)
+            if os.path.exists(page_dir):
+                files = sorted(os.listdir(page_dir))
+                if files:
+                    st.markdown("---")
+                    c = st.columns(5)
+                    for i, f in enumerate(files):
+                        fp = os.path.join(page_dir, f)
+                        ext = f.split(".")[-1].lower()
+                        if ext in ["png", "jpg", "jpeg"]:
+                            try:
+                                c[i%5].image(fp, caption=f, width=120)
+                            except Exception:
+                                c[i%5].markdown(f"🖼️ [{f}]({fp})")
+                        else:
+                            c[i%5].markdown(f"📄 [{f}]({fp})")
 
     # Editor controls governed by feature toggle and user privileges
     cur_path_str = " / ".join(level) if level else ""
@@ -672,12 +683,22 @@ def render_section(level, node):
                 st.rerun()
         up = st.file_uploader("📤 Upload File", type=["png","jpg","jpeg","pdf","xlsx","xls","docx"])
         if up:
+            # Ensure page_dir variable exists (compute only if level present, else use 'home' but do not display home files)
+            if level:
+                page_dir = os.path.join(UPLOAD_DIR, "_".join(level))
+            else:
+                page_dir = os.path.join(UPLOAD_DIR, "home")
             os.makedirs(page_dir, exist_ok=True)
             with open(os.path.join(page_dir, up.name),"wb") as f:
                 f.write(up.read())
             st.success(f"Uploaded {up.name}")
             st.rerun()
-        files = sorted(os.listdir(page_dir)) if os.path.exists(page_dir) else []
+        # Delete list for current page
+        if level:
+            page_dir = os.path.join(UPLOAD_DIR, "_".join(level))
+            files = sorted(os.listdir(page_dir)) if os.path.exists(page_dir) else []
+        else:
+            files = []
         if files:
             sel = st.selectbox("Delete file", [""] + files)
             if sel and st.button("🗑️ Delete"):
