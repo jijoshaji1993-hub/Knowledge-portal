@@ -1,5 +1,5 @@
 streamlit==1.40.1
 pandas
 openai
-streamlit-quill>=0.1.3
+streamlit-quill==0.0.3
 streamlit-option-menu>=0.3.6
