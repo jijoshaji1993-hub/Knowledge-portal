@@ -1,0 +1,163 @@
+{
+    "Prepaid": {
+        "icon": "\ud83d\udcf1",
+        "color": "#1f77b4",
+        "subtopics": {
+            "Recharge Related": {
+                "content": "Recharge plans with validity and rates details.",
+                "sub_subtopics": {
+                    "Plan voucher Packs": "Plan vouchers with Validity.",
+                    "STV Packs": "STV Packs with validity.",
+                    "Data Packs": "Data packs with validity.",
+                    "Other Packs": "Other packs including IR."
+                }
+            },
+            "Balance Enquiry": {
+                "content": "Check your balance by dialing *123# or using the app.",
+                "sub_subtopics": {
+                    "USSD": "Dial *123# to check balance.",
+                    "App": "Use My BSNL app for balance details."
+                }
+            },
+            "Validity Check": {
+                "content": "Check your validity using *123# or My BSNL app.",
+                "sub_subtopics": {}
+            },
+            "Connectivity Issues": {
+                "content": "Common connectivity issues.",
+                "sub_subtopics": {
+                    "Data Connectivity": "TEST",
+                    "Call Connectivity": "Issues with making or receiving calls.",
+                    "SMS Connectivity": "Problems with sending or receiving SMS."
+                }
+            },
+            "Data Offers": {
+                "content": "Latest data packs and promotional offers.",
+                "sub_subtopics": {
+                    "Night Data Packs": "Special packs for night time.",
+                    "High Speed Packs": "High-speed data packs."
+                }
+            }
+        }
+    },
+    "Postpaid": {
+        "icon": "\ud83d\udcf6",
+        "color": "#ff7f0e",
+        "subtopics": {
+            "Bill Payment Issues": {
+                "content": "Resolve payment failures and check due bills.",
+                "sub_subtopics": {
+                    "Online Payment": "Check online payment errors.",
+                    "Offline Payment": "Check offline payment issues."
+                }
+            },
+            "Plan Upgrades": {
+                "content": "Upgrade your postpaid plan with ease.",
+                "sub_subtopics": {
+                    "Data Upgrade": "Increase your monthly data limit.",
+                    "Call Upgrade": "Add extra calling minutes."
+                }
+            },
+            "Add-on Data Packs": {
+                "content": "Purchase extra data packs anytime.",
+                "sub_subtopics": {}
+            },
+            "Payment Status Check": {
+                "content": "Track payment confirmation and status.",
+                "sub_subtopics": {}
+            }
+        }
+    },
+    "Wireline": {
+        "icon": "\u260e\ufe0f",
+        "color": "#d62728",
+        "subtopics": {
+            "Landline Billing": {
+                "content": "Check and pay your landline bills online or offline.",
+                "sub_subtopics": {}
+            },
+            "Broadband Connectivity": {
+                "content": "Troubleshoot broadband and fiber connection issues.",
+                "sub_subtopics": {
+                    "Slow Speed": "Troubleshoot slow internet speeds.",
+                    "No Connectivity": "No internet connection detected.",
+                    "Intermittent Connection": "Internet connection drops intermittently."
+                }
+            },
+            "Fault Reporting": {
+                "content": "Report faults via 198 or self-care portal.",
+                "sub_subtopics": {}
+            }
+        }
+    },
+    "Retailer": {
+        "icon": "\ud83e\uddfe",
+        "color": "#2ca02c",
+        "subtopics": {
+            "Retailer Commission Details": {
+                "content": "View commission statements for each SIM sold.",
+                "sub_subtopics": {}
+            },
+            "SIM Activation": {
+                "content": "Activate new SIMs efficiently.",
+                "sub_subtopics": {}
+            },
+            "Retailer App Issues": {
+                "content": "Troubleshoot retailer app issues or errors.",
+                "sub_subtopics": {}
+            }
+        }
+    },
+    "FAQ": {
+        "icon": "\u2753",
+        "color": "#9467bd",
+        "subtopics": {
+            "How to check balance?": {
+                "content": "Dial *123# for prepaid customers.",
+                "sub_subtopics": {}
+            },
+            "How to contact customer care?": {
+                "content": "Dial 1503 from BSNL number.",
+                "sub_subtopics": {}
+            }
+        }
+    },
+    "Script": {
+        "icon": "\ud83d\udcdc",
+        "color": "#8c564b",
+        "subtopics": {
+            "Wireless Script": {
+                "sub_subtopics": {
+                    "Malayalam": "",
+                    "Tamil": {
+                        "content": "Need to update"
+                    }
+                }
+            },
+            "Wireline Script": {
+                "content": "Wireline Script."
+            },
+            "OBD Script": {
+                "content": "OBD Script."
+            }
+        }
+    },
+    "Help Line": {
+        "icon": "\ud83c\udd98",
+        "color": "#8c564b",
+        "subtopics": {
+            "Customer Care": {
+                "content": "1503",
+                "sub_subtopics": {}
+            },
+            "Broadband": {
+                "content": "1504",
+                "sub_subtopics": {}
+            },
+            "Fault Booking": {
+                "content": "198",
+                "sub_subtopics": {}
+            }
+        }
+    }
+}
